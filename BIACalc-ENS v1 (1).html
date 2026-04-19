@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIACalc ENS — Análisis de Impacto de Negocio</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plum-900: #1a0a2e;
+  --plum-800: #2d1554;
+  --plum-700: #3f1f7a;
+  --plum-600: #5a2d9e;
+  --plum-500: #7b4bc2;
+  --plum-400: #9d6fd6;
+  --plum-300: #c4a3e8;
+  --plum-200: #e0d0f5;
+  --plum-100: #f3edfb;
+  --gold-600: #b8860b;
+  --gold-500: #d4a017;
+  --gold-400: #e8b824;
+  --gold-300: #f5cc55;
+  --gold-200: #fde98a;
+  --gold-100: #fff8d6;
+  --green-600: #1a6b3a;
+  --green-500: #2d9e57;
+  --green-400: #3dbd6a;
+  --green-100: #d4f5e2;
+  --amber-600: #b85c00;
+  --amber-500: #e07b00;
+  --amber-400: #f59500;
+  --amber-100: #fff0cc;
+  --red-600: #8b1a1a;
+  --red-500: #c82020;
+  --red-400: #e53030;
+  --red-100: #fde8e8;
+  --slate-900: #0f0f14;
+  --slate-800: #1a1a24;
+  --slate-700: #252535;
+  --slate-600: #363650;
+  --slate-500: #4a4a6a;
+  --slate-400: #6b6b8f;
+  --slate-300: #9898b8;
+  --slate-200: #c8c8dc;
+  --slate-100: #f0f0f5;
+  --white: #ffffff;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-serif: 'IBM Plex Serif', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--slate-100);
+  color: var(--slate-900);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── CLASIFICACIÓN BAR ── */
+.ccn-bar {
+  background: var(--plum-900);
+  color: var(--gold-300);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 5px 16px;
+  border-bottom: 2px solid var(--gold-500);
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--plum-800);
+  border-bottom: 1px solid var(--plum-600);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 58px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.topbar-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--gold-400);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--plum-900);
+  letter-spacing: -0.02em;
+}
+
+.topbar-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+.topbar-subtitle {
+  font-size: 10px;
+  color: var(--plum-300);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.topbar-badges {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+}
+
+.badge-esencial { background: rgba(197,32,32,0.15); border-color: var(--red-400); color: var(--red-400); }
+.badge-importante { background: rgba(240,149,0,0.15); border-color: var(--amber-400); color: var(--amber-400); }
+.badge-complementario { background: rgba(61,189,106,0.15); border-color: var(--green-400); color: var(--green-400); }
+.badge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.badge-count { font-size: 14px; }
+
+/* ── TAB NAV ── */
+.tab-nav {
+  background: var(--plum-900);
+  border-bottom: 1px solid var(--plum-700);
+  display: flex;
+  padding: 0 24px;
+  gap: 2px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--plum-300);
+  padding: 14px 20px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { color: var(--white); border-bottom-color: var(--plum-400); }
+.tab-btn.active { color: var(--gold-300); border-bottom-color: var(--gold-400); }
+
+.tab-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--plum-700);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.tab-btn.active .tab-num { background: var(--gold-400); color: var(--plum-900); }
+
+/* ── LAYOUT ── */
+.main-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── SECTION HEADERS ── */
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--plum-200);
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--plum-800);
+}
+
+.section-desc {
+  font-size: 13px;
+  color: var(--slate-500);
+  margin-top: 3px;
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--plum-600);
+  color: var(--white);
+  border-color: var(--plum-700);
+}
+.btn-primary:hover { background: var(--plum-500); }
+
+.btn-gold {
+  background: var(--gold-400);
+  color: var(--plum-900);
+  border-color: var(--gold-500);
+  font-weight: 600;
+}
+.btn-gold:hover { background: var(--gold-300); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--plum-600);
+  border-color: var(--plum-300);
+}
+.btn-outline:hover { background: var(--plum-100); }
+
+.btn-danger {
+  background: transparent;
+  color: var(--red-500);
+  border-color: var(--red-400);
+}
+.btn-danger:hover { background: var(--red-100); }
+
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--plum-200);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(45,21,84,0.06);
+}
+
+/* ── SERVICES TABLE ── */
+.services-table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--plum-200);
+  background: var(--white);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead {
+  background: var(--plum-900);
+  color: var(--white);
+}
+
+thead th {
+  padding: 11px 14px;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--plum-300);
+}
+
+thead th:first-child { border-radius: 10px 0 0 0; }
+thead th:last-child { border-radius: 0 10px 0 0; }
+
+tbody tr { border-bottom: 1px solid var(--plum-100); transition: background 0.12s; }
+tbody tr:hover { background: var(--plum-100); }
+tbody tr:last-child { border-bottom: none; }
+
+tbody td {
+  padding: 11px 14px;
+  vertical-align: middle;
+  color: var(--slate-800);
+}
+
+.empty-row td {
+  text-align: center;
+  padding: 48px;
+  color: var(--slate-400);
+  font-style: italic;
+}
+
+/* ── CRITICIDAD PILLS ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pill-esencial { background: var(--red-100); color: var(--red-600); border: 1px solid #f5a0a0; }
+.pill-importante { background: var(--amber-100); color: var(--amber-600); border: 1px solid #f5c878; }
+.pill-complementario { background: var(--green-100); color: var(--green-600); border: 1px solid #90dba8; }
+.pill-nd { background: var(--slate-100); color: var(--slate-500); border: 1px solid var(--slate-200); }
+
+.cat-tic { background: var(--plum-100); color: var(--plum-700); border-radius: 4px; padding: 2px 7px; font-size: 11px; font-family: var(--font-mono); }
+.cat-negocio { background: #e8f4fd; color: #1a5c8b; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-family: var(--font-mono); }
+.cat-soporte { background: #f0f5e8; color: #4a6b1a; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-family: var(--font-mono); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,10,46,0.65);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 28px;
+  width: 620px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(26,10,46,0.4);
+  border: 1px solid var(--plum-200);
+}
+
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--plum-800);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--plum-200);
+}
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-full { grid-column: 1 / -1; }
+
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.form-input, .form-select, .form-textarea {
+  padding: 9px 12px;
+  border: 1px solid var(--plum-200);
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--slate-900);
+  background: var(--white);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--plum-500);
+  box-shadow: 0 0 0 3px rgba(122,75,194,0.12);
+}
+
+.form-textarea { resize: vertical; min-height: 70px; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--plum-200);
+}
+
+/* ── IMPACTO MATRIX ── */
+.impact-section { margin-bottom: 32px; }
+.impact-service-header {
+  background: var(--plum-800);
+  color: var(--white);
+  padding: 14px 20px;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.impact-service-name {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.impact-service-meta {
+  font-size: 12px;
+  color: var(--plum-300);
+  font-family: var(--font-mono);
+}
+
+.impact-body {
+  background: var(--white);
+  border: 1px solid var(--plum-200);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 16px;
+}
+
+.impact-grid-wrap { overflow-x: auto; }
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: 100px repeat(5, 1fr);
+  gap: 4px;
+  min-width: 540px;
+  margin-bottom: 16px;
+}
+
+.ig-header {
+  background: var(--slate-100);
+  padding: 8px 6px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--slate-600);
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+
+.ig-dim-label {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--plum-700);
+  background: var(--plum-100);
+  border-radius: 5px;
+}
+
+.impact-btn-group {
+  display: flex;
+  gap: 3px;
+}
+
+.impact-btn {
+  flex: 1;
+  padding: 6px 4px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  background: var(--white);
+}
+
+.impact-btn.bajo { border-color: var(--green-400); color: var(--green-500); }
+.impact-btn.bajo.sel { background: var(--green-400); color: var(--white); }
+.impact-btn.medio { border-color: var(--amber-400); color: var(--amber-500); }
+.impact-btn.medio.sel { background: var(--amber-400); color: var(--white); }
+.impact-btn.alto { border-color: var(--red-400); color: var(--red-500); }
+.impact-btn.alto.sel { background: var(--red-400); color: var(--white); }
+
+/* Calcula params row */
+.calc-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--plum-200);
+}
+
+.calc-box {
+  background: var(--plum-100);
+  border: 1px solid var(--plum-200);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.calc-box-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--plum-500);
+  margin-bottom: 4px;
+}
+
+.calc-box-val {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--plum-800);
+  line-height: 1;
+}
+
+.calc-box-sub { font-size: 10px; color: var(--slate-500); margin-top: 2px; }
+
+/* RPO field */
+.rpo-field-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.rpo-field-label { font-family: var(--font-mono); font-size: 11px; color: var(--slate-600); white-space: nowrap; }
+.rpo-input { width: 80px; padding: 6px 8px; border: 1px solid var(--plum-200); border-radius: 5px; font-family: var(--font-mono); font-size: 13px; color: var(--plum-800); font-weight: 600; }
+
+/* RTO slider */
+.rto-adj-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.rto-adj-label { font-family: var(--font-mono); font-size: 11px; color: var(--slate-600); white-space: nowrap; }
+.rto-slider { -webkit-appearance: none; width: 140px; height: 4px; border-radius: 2px; background: var(--plum-200); outline: none; }
+.rto-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--plum-500); cursor: pointer; border: 2px solid var(--white); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+.rto-val { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--plum-700); min-width: 50px; }
+
+/* Timeline visual */
+.timeline-wrap { margin-top: 14px; padding: 12px; background: var(--slate-100); border-radius: 8px; }
+.timeline-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate-500); margin-bottom: 8px; }
+.timeline-bar { position: relative; height: 28px; border-radius: 6px; background: var(--white); border: 1px solid var(--slate-200); overflow: hidden; }
+.tl-rpo { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(61,189,106,0.3); border-right: 2px solid var(--green-500); display: flex; align-items: center; justify-content: center; }
+.tl-rto { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(240,149,0,0.2); border-right: 2px solid var(--amber-500); }
+.tl-mtpd { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(197,32,32,0.1); border-right: 2px solid var(--red-500); }
+.tl-label { position: absolute; font-family: var(--font-mono); font-size: 8px; font-weight: 700; top: 2px; }
+.timeline-legend { display: flex; gap: 14px; margin-top: 6px; }
+.tl-leg { display: flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; color: var(--slate-600); }
+.tl-leg-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+/* RADAR SVG */
+.radar-wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+
+/* ── HEATMAP ── */
+.heatmap-section { margin-bottom: 24px; }
+.heatmap-grid {
+  overflow-x: auto;
+}
+.heatmap-table {
+  border-collapse: separate;
+  border-spacing: 3px;
+  min-width: 700px;
+}
+.hm-head {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--slate-600);
+  text-transform: uppercase;
+  padding: 6px 10px;
+  text-align: center;
+}
+.hm-name {
+  font-size: 12px;
+  color: var(--slate-800);
+  padding: 6px 10px;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hm-cell {
+  width: 70px;
+  height: 36px;
+  border-radius: 6px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: default;
+  vertical-align: middle;
+  transition: transform 0.12s;
+}
+.hm-cell:hover { transform: scale(1.08); }
+.hm-0 { background: var(--slate-100); color: var(--slate-400); }
+.hm-1 { background: #c3f0d6; color: #1a6b3a; }
+.hm-2 { background: #fde6a0; color: #b85c00; }
+.hm-3 { background: #fac5c5; color: #8b1a1a; }
+
+/* ── PARÁMETROS TAB ── */
+.params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.params-ref-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+.params-ref-table th {
+  background: var(--plum-800);
+  color: var(--plum-200);
+  padding: 9px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+.params-ref-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--plum-100);
+  color: var(--slate-700);
+  vertical-align: top;
+}
+.params-ref-table tr:hover td { background: var(--plum-100); }
+
+.def-term { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--plum-700); }
+.def-body { font-size: 12px; color: var(--slate-600); margin-top: 4px; line-height: 1.5; }
+
+/* ── EXPORT TAB ── */
+.export-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.export-card {
+  background: var(--white);
+  border: 1px solid var(--plum-200);
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.export-card:hover { box-shadow: 0 6px 20px rgba(45,21,84,0.12); transform: translateY(-2px); }
+
+.export-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: var(--plum-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.export-card-title {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--plum-800);
+}
+
+.export-card-desc { font-size: 12px; color: var(--slate-500); line-height: 1.5; flex: 1; }
+
+/* ── ALERT STRIP ── */
+.alert-strip {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.alert-info { background: #e8f4fd; border: 1px solid #a8d4f0; color: #1a4a6b; }
+.alert-warn { background: var(--gold-100); border: 1px solid var(--gold-300); color: var(--gold-600); }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--plum-200); margin: 24px 0; }
+
+/* ── NO SERVICES ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--slate-400);
+}
+.empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state-title { font-family: var(--font-serif); font-size: 18px; color: var(--slate-500); margin-bottom: 6px; }
+
+/* Import hidden */
+#importInput { display: none; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: var(--plum-100); }
+::-webkit-scrollbar-thumb { background: var(--plum-300); border-radius: 4px; }
+
+/* ── INFO TOOLTIP ── */
+.info-tip { display: inline-block; width: 16px; height: 16px; border-radius: 50%; background: var(--plum-200); color: var(--plum-700); font-size: 10px; font-weight: 700; text-align: center; line-height: 16px; cursor: help; vertical-align: middle; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  background: var(--plum-900);
+  color: var(--plum-300);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 5px 24px;
+  display: flex;
+  gap: 20px;
+  border-top: 1px solid var(--plum-800);
+  flex-wrap: wrap;
+}
+.status-item { display: flex; align-items: center; gap: 5px; }
+.status-item strong { color: var(--gold-300); }
+</style>
+</head>
+<body>
+
+<!-- Clasificación CCN -->
+<div class="ccn-bar">⬛ ENS — Uso interno / Para gestión interna del organismo ⬛</div>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-logo-icon">BIA</div>
+    <div>
+      <div class="topbar-title">BIACalc ENS</div>
+      <div class="topbar-subtitle">Calculadora RTO/RPO · op.cont.1 · CCN-STIC-808</div>
+    </div>
+  </div>
+  <div class="topbar-badges">
+    <div class="badge badge-esencial"><span class="badge-dot"></span>ESENCIAL <span class="badge-count" id="cnt-esencial">0</span></div>
+    <div class="badge badge-importante"><span class="badge-dot"></span>IMPORTANTE <span class="badge-count" id="cnt-importante">0</span></div>
+    <div class="badge badge-complementario"><span class="badge-dot"></span>COMPLEMENTARIO <span class="badge-count" id="cnt-complementario">0</span></div>
+  </div>
+</div>
+
+<!-- Tab nav -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab(0)"><span class="tab-num">1</span> Servicios</button>
+  <button class="tab-btn" onclick="switchTab(1)"><span class="tab-num">2</span> Análisis de Impacto</button>
+  <button class="tab-btn" onclick="switchTab(2)"><span class="tab-num">3</span> Parámetros ENS</button>
+  <button class="tab-btn" onclick="switchTab(3)"><span class="tab-num">4</span> Exportar Evidencia</button>
+</div>
+
+<div class="main-content">
+
+  <!-- ════════════════════ TAB 1 — SERVICIOS ════════════════════ -->
+  <div class="tab-panel active" id="tab-0">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Catálogo de Servicios</div>
+        <div class="section-desc">Registre los servicios TIC, de negocio y de soporte del organismo para el análisis BIA.</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('importInput').click()">⬆ Importar CSV</button>
+        <button class="btn btn-outline btn-sm" onclick="exportServicesCSV()">⬇ Exportar CSV</button>
+        <button class="btn btn-primary" onclick="openServiceModal()">+ Añadir servicio</button>
+      </div>
+    </div>
+    <input type="file" id="importInput" accept=".csv" onchange="importCSV(event)">
+
+    <div class="services-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px">#</th>
+            <th>Nombre del Servicio</th>
+            <th>Categoría</th>
+            <th>Responsable</th>
+            <th>Sistemas/Activos</th>
+            <th>Dependencias</th>
+            <th>Cambio datos (h)</th>
+            <th>Criticidad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="servicesTableBody">
+          <tr class="empty-row"><td colspan="9">No hay servicios registrados. Pulse "Añadir servicio" para comenzar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════ TAB 2 — ANÁLISIS ════════════════════ -->
+  <div class="tab-panel" id="tab-1">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Análisis de Impacto por Servicio</div>
+        <div class="section-desc">Evalúe el impacto de interrupción en 5 dimensiones ENS (D, A, I, C, T) para cada marco temporal.</div>
+      </div>
+    </div>
+
+    <!-- Heatmap resumen -->
+    <div class="card heatmap-section">
+      <div style="font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--plum-600);margin-bottom:12px;">
+        🗺 Mapa de Calor de Impacto — Impacto máximo por servicio y tiempo
+      </div>
+      <div class="heatmap-grid">
+        <table class="heatmap-table" id="heatmapTable">
+          <thead>
+            <tr>
+              <th class="hm-head" style="text-align:left;padding-left:10px">Servicio</th>
+              <th class="hm-head">1h</th>
+              <th class="hm-head">4h</th>
+              <th class="hm-head">24h</th>
+              <th class="hm-head">72h</th>
+              <th class="hm-head">1 sem</th>
+              <th class="hm-head">MTPD</th>
+              <th class="hm-head">Criticidad</th>
+            </tr>
+          </thead>
+          <tbody id="heatmapBody">
+            <tr><td colspan="8" style="text-align:center;padding:20px;color:var(--slate-400);font-style:italic;font-size:13px;">Añada servicios y complete el análisis para ver el mapa de calor.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="impactPanels">
+      <div class="empty-state">
+        <div class="empty-state-icon">📊</div>
+        <div class="empty-state-title">No hay servicios para analizar</div>
+        <p style="font-size:13px">Vaya a la pestaña "Servicios" y registre al menos un servicio.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ TAB 3 — PARÁMETROS ════════════════════ -->
+  <div class="tab-panel" id="tab-2">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Parámetros ENS y Configuración</div>
+        <div class="section-desc">Referencia normativa op.cont.1 — RD 311/2022 — CCN-STIC-808. Configure los metadatos del BIA.</div>
+      </div>
+    </div>
+
+    <div class="params-grid">
+      <!-- Configuración organismo -->
+      <div class="card">
+        <div style="font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--plum-600);margin-bottom:14px;">⚙ Configuración del Análisis</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">Organismo</label>
+            <input type="text" class="form-input" id="cfg-organismo" placeholder="Nombre del organismo público" oninput="saveConfig()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre del sistema</label>
+            <input type="text" class="form-input" id="cfg-sistema" placeholder="Nombre del sistema de información" oninput="saveConfig()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categoría ENS del sistema</label>
+            <select class="form-select" id="cfg-categoria" onchange="saveConfig()">
+              <option value="">-- Seleccionar --</option>
+              <option value="BASICA">BÁSICA</option>
+              <option value="MEDIA">MEDIA</option>
+              <option value="ALTA">ALTA</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Responsable del BIA</label>
+            <input type="text" class="form-input" id="cfg-responsable" placeholder="Nombre y cargo del responsable" oninput="saveConfig()">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Fecha del análisis</label>
+              <input type="date" class="form-input" id="cfg-fecha" oninput="saveConfig()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Próxima revisión</label>
+              <input type="date" class="form-input" id="cfg-revision" oninput="saveConfig()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla normativa -->
+      <div class="card">
+        <div style="font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--plum-600);margin-bottom:14px;">📋 Umbrales Orientativos ENS por Categoría</div>
+        <div style="overflow-x:auto">
+          <table class="params-ref-table">
+            <thead>
+              <tr><th>Categoría</th><th>RTO máx.</th><th>RPO máx.</th><th>MTPD ref.</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>ALTA</strong></td><td>&lt; 4 horas</td><td>&lt; 1 hora</td><td>&lt; 8 horas</td></tr>
+              <tr><td><strong>MEDIA</strong></td><td>&lt; 24 horas</td><td>&lt; 4 horas</td><td>&lt; 48 horas</td></tr>
+              <tr><td><strong>BÁSICA</strong></td><td>&lt; 72 horas</td><td>&lt; 24 horas</td><td>&lt; 1 semana</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:18px;display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div class="def-term">RTO — Recovery Time Objective</div>
+            <div class="def-body">Tiempo máximo tolerable desde la interrupción hasta la restauración del servicio a un nivel mínimo de funcionamiento aceptable.</div>
+          </div>
+          <div>
+            <div class="def-term">RPO — Recovery Point Objective</div>
+            <div class="def-body">Antigüedad máxima tolerable de los datos recuperados. Determina la frecuencia mínima de copia de seguridad.</div>
+          </div>
+          <div>
+            <div class="def-term">MTPD — Maximum Tolerable Period of Disruption</div>
+            <div class="def-body">Tiempo máximo que la organización puede tolerar la no disponibilidad del servicio antes de que el impacto sea considerado catastrófico.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dimensiones ENS -->
+    <div class="card" style="margin-top:20px;">
+      <div style="font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--plum-600);margin-bottom:14px;">🔐 Dimensiones de Seguridad ENS (D.A.I.C.T.)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div class="card" style="background:var(--plum-100);border-color:var(--plum-200)">
+          <div class="def-term">D — Disponibilidad</div>
+          <div class="def-body">Capacidad de acceder y utilizar los sistemas y datos cuando se necesita.</div>
+        </div>
+        <div class="card" style="background:var(--plum-100);border-color:var(--plum-200)">
+          <div class="def-term">A — Autenticidad</div>
+          <div class="def-body">Garantía de la identidad de los usuarios y de la procedencia de la información.</div>
+        </div>
+        <div class="card" style="background:var(--plum-100);border-color:var(--plum-200)">
+          <div class="def-term">I — Integridad</div>
+          <div class="def-body">Exactitud e integridad de la información y los procesos de negocio.</div>
+        </div>
+        <div class="card" style="background:var(--plum-100);border-color:var(--plum-200)">
+          <div class="def-term">C — Confidencialidad</div>
+          <div class="def-body">Información accesible solo a entidades autorizadas.</div>
+        </div>
+        <div class="card" style="background:var(--plum-100);border-color:var(--plum-200)">
+          <div class="def-term">T — Trazabilidad</div>
+          <div class="def-body">Registro de las acciones realizadas sobre los activos del sistema.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-strip alert-info" style="margin-top:16px">
+      <span>ℹ</span>
+      <span>Referencia normativa: <strong>op.cont.1 — RD 311/2022 ENS — CCN-STIC-808 Fila 166</strong>. Los parámetros RTO/RPO calculados son orientativos y deben ser validados y aprobados por el Responsable del Sistema.</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════ TAB 4 — EXPORTAR ════════════════════ -->
+  <div class="tab-panel" id="tab-3">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Exportar Evidencia ENS</div>
+        <div class="section-desc">Genere los documentos de evidencia para op.cont.1 — CCN-STIC-808 Fila 166.</div>
+      </div>
+    </div>
+
+    <div id="export-warn" class="alert-strip alert-warn" style="display:none">
+      ⚠ Algunos servicios no tienen el análisis de impacto completo. Revise la pestaña "Análisis de Impacto".
+    </div>
+
+    <div class="export-cards">
+      <div class="export-card">
+        <div class="export-card-icon">📄</div>
+        <div class="export-card-title">Informe BIA Completo</div>
+        <div class="export-card-desc">Documento HTML autocontenido con cabecera institucional, tabla de servicios con RTO/RPO/MTPD, mapa de calor, matriz de dependencias y apartado de conclusiones. Incluye espacio para firma del responsable.</div>
+        <button class="btn btn-gold" onclick="exportFullReport()">⬇ Descargar Informe BIA</button>
+      </div>
+      <div class="export-card">
+        <div class="export-card-icon">📊</div>
+        <div class="export-card-title">Tabla de Servicios (CSV)</div>
+        <div class="export-card-desc">Exportación tabular de todos los servicios con sus parámetros calculados (RTO, RPO, MTPD, criticidad). Importable en hojas de cálculo y otras herramientas.</div>
+        <button class="btn btn-primary" onclick="exportAnalysisCSV()">⬇ Descargar CSV</button>
+      </div>
+      <div class="export-card">
+        <div class="export-card-icon">📑</div>
+        <div class="export-card-title">Fichas por Servicio</div>
+        <div class="export-card-desc">Un documento HTML con fichas individuales para cada servicio, con perfil de impacto completo, RTO/RPO definitivo y activos asociados. Sirve como anexo al plan de continuidad.</div>
+        <button class="btn btn-primary" onclick="exportServiceCards()">⬇ Descargar Fichas</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div style="background:var(--plum-100);border:1px solid var(--plum-200);border-radius:8px;padding:14px 16px;">
+      <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--plum-500);margin-bottom:8px;">ℹ Sobre los exportables</div>
+      <ul style="font-size:12px;color:var(--slate-600);line-height:1.7;padding-left:16px;">
+        <li>Todos los documentos se generan en el navegador (sin servidor) y se descargan directamente.</li>
+        <li>Los datos no se almacenan. Al cerrar la pestaña se pierden — exporte antes de cerrar.</li>
+        <li>El informe BIA lleva en el pie la referencia: <em>"Análisis de Impacto en el Negocio conforme a op.cont.1 — RD 311/2022 ENS — CCN-STIC-808 Fila 166"</em>.</li>
+        <li>Para evidencia auditable, imprima el HTML a PDF e incorpore la firma del responsable del sistema.</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /main-content -->
+
+<!-- Status bar -->
+<div class="status-bar">
+  <span class="status-item">BIACalc ENS v1.0</span>
+  <span class="status-item">Servicios registrados: <strong id="sb-total">0</strong></span>
+  <span class="status-item">Analizados: <strong id="sb-analyzed">0</strong></span>
+  <span class="status-item">Sesión local — sin servidor</span>
+  <span class="status-item" style="margin-left:auto">op.cont.1 · RD 311/2022 · CCN-STIC-808</span>
+</div>
+
+<!-- Modal Servicio -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal">
+    <div class="modal-title" id="serviceModalTitle">Añadir Servicio</div>
+    <div class="form-grid">
+      <div class="form-group form-grid-full">
+        <label class="form-label">Nombre del servicio *</label>
+        <input type="text" class="form-input" id="svc-nombre" placeholder="Ej: Gestión de expedientes electrónicos">
+      </div>
+      <div class="form-group form-grid-full">
+        <label class="form-label">Descripción breve</label>
+        <textarea class="form-textarea" id="svc-desc" placeholder="Describe brevemente la función del servicio y su importancia para el organismo..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoría *</label>
+        <select class="form-select" id="svc-categoria">
+          <option value="TIC">TIC</option>
+          <option value="Negocio">Negocio</option>
+          <option value="Soporte">Soporte</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Responsable</label>
+        <input type="text" class="form-input" id="svc-responsable" placeholder="Nombre del responsable">
+      </div>
+      <div class="form-group form-grid-full">
+        <label class="form-label">Sistemas y activos que lo sustentan</label>
+        <input type="text" class="form-input" id="svc-activos" placeholder="Ej: Servidor APP01, BBDD Oracle, Almacenamiento SAN-A">
+      </div>
+      <div class="form-group form-grid-full">
+        <label class="form-label">Dependencias de otros servicios del catálogo</label>
+        <input type="text" class="form-input" id="svc-dependencias" placeholder="Ej: Servicio de Identidad, Servicio de Red Corporativa">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Frecuencia cambio de datos (horas)</label>
+        <input type="number" class="form-input" id="svc-freqcambio" placeholder="Ej: 4" min="0.25" step="0.25" value="4">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Usuarios afectados (aprox.)</label>
+        <input type="number" class="form-input" id="svc-usuarios" placeholder="Ej: 250" min="0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeServiceModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveService()">Guardar servicio</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+let services = [];   // { id, nombre, desc, categoria, responsable, activos, dependencias, freqCambio, usuarios }
+let impacts  = {};   // impacts[id][dim][timeframe] = 'bajo'|'medio'|'alto'
+let rtoAdj   = {};   // rtoAdj[id] = factor 0.3..0.7
+let config   = {};   // organismo, sistema, categoria, responsable, fecha, revision
+let editId   = null;
+
+const DIMS  = ['D','A','I','C','T'];
+const TIMES = ['1h','4h','24h','72h','1sem'];
+const TIME_H = {'1h':1,'4h':4,'24h':24,'72h':72,'1sem':168};
+const TIME_LABELS = {'1h':'1 hora','4h':'4 horas','24h':'24 horas','72h':'72 horas','1sem':'1 semana'};
+
+// ════════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════════
+function switchTab(n){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+  if(n===1) renderImpactPanels();
+  if(n===3) checkExportWarn();
+}
+
+// ════════════════════════════════════════════════════════════
+// MODAL SERVICIO
+// ════════════════════════════════════════════════════════════
+function openServiceModal(id=null){
+  editId = id;
+  const s = id ? services.find(x=>x.id===id) : null;
+  document.getElementById('serviceModalTitle').textContent = id ? 'Editar Servicio' : 'Añadir Servicio';
+  document.getElementById('svc-nombre').value      = s?.nombre       || '';
+  document.getElementById('svc-desc').value        = s?.desc         || '';
+  document.getElementById('svc-categoria').value   = s?.categoria    || 'TIC';
+  document.getElementById('svc-responsable').value = s?.responsable  || '';
+  document.getElementById('svc-activos').value     = s?.activos      || '';
+  document.getElementById('svc-dependencias').value= s?.dependencias || '';
+  document.getElementById('svc-freqcambio').value  = s?.freqCambio   || 4;
+  document.getElementById('svc-usuarios').value    = s?.usuarios     || '';
+  document.getElementById('serviceModal').classList.add('open');
+}
+
+function closeServiceModal(){
+  document.getElementById('serviceModal').classList.remove('open');
+  editId = null;
+}
+
+function saveService(){
+  const nombre = document.getElementById('svc-nombre').value.trim();
+  if(!nombre){ alert('El nombre del servicio es obligatorio.'); return; }
+  const svc = {
+    id:           editId || 'svc_' + Date.now(),
+    nombre,
+    desc:         document.getElementById('svc-desc').value.trim(),
+    categoria:    document.getElementById('svc-categoria').value,
+    responsable:  document.getElementById('svc-responsable').value.trim(),
+    activos:      document.getElementById('svc-activos').value.trim(),
+    dependencias: document.getElementById('svc-dependencias').value.trim(),
+    freqCambio:   parseFloat(document.getElementById('svc-freqcambio').value) || 4,
+    usuarios:     parseInt(document.getElementById('svc-usuarios').value)     || 0
+  };
+  if(editId){
+    const idx = services.findIndex(x=>x.id===editId);
+    services[idx] = svc;
+  } else {
+    services.push(svc);
+    impacts[svc.id]  = {};
+    rtoAdj[svc.id]   = 0.5;
+    DIMS.forEach(d=>{ impacts[svc.id][d]={}; TIMES.forEach(t=>{ impacts[svc.id][d][t]=null; }); });
+  }
+  closeServiceModal();
+  renderServicesTable();
+  updateBadges();
+}
+
+function deleteService(id){
+  if(!confirm('¿Eliminar este servicio y todos sus datos de análisis?')) return;
+  services = services.filter(x=>x.id!==id);
+  delete impacts[id];
+  delete rtoAdj[id];
+  renderServicesTable();
+  updateBadges();
+}
+
+// ════════════════════════════════════════════════════════════
+// RENDER SERVICES TABLE
+// ════════════════════════════════════════════════════════════
+function renderServicesTable(){
+  const tb = document.getElementById('servicesTableBody');
+  if(!services.length){
+    tb.innerHTML = '<tr class="empty-row"><td colspan="9">No hay servicios registrados. Pulse "Añadir servicio" para comenzar.</td></tr>';
+    updateStatusBar();
+    return;
+  }
+  tb.innerHTML = services.map((s,i)=>{
+    const calc = calcService(s);
+    const catCls = s.categoria==='TIC'?'cat-tic':s.categoria==='Negocio'?'cat-negocio':'cat-soporte';
+    const critCls = {'ESENCIAL':'pill-esencial','IMPORTANTE':'pill-importante','COMPLEMENTARIO':'pill-complementario','—':'pill-nd'}[calc.criticidad]||'pill-nd';
+    return `<tr>
+      <td style="font-family:var(--font-mono);color:var(--slate-400);font-size:12px">${i+1}</td>
+      <td><strong style="font-size:13px;color:var(--plum-800)">${esc(s.nombre)}</strong>
+          ${s.desc?`<div style="font-size:11px;color:var(--slate-500);margin-top:2px">${esc(s.desc.substring(0,60))}${s.desc.length>60?'…':''}</div>`:''}
+      </td>
+      <td><span class="${catCls}">${esc(s.categoria)}</span></td>
+      <td style="font-size:12px">${esc(s.responsable||'—')}</td>
+      <td style="font-size:11px;color:var(--slate-600)">${esc((s.activos||'—').substring(0,40))}</td>
+      <td style="font-size:11px;color:var(--slate-600)">${esc((s.dependencias||'—').substring(0,35))}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;text-align:center">${s.freqCambio}h</td>
+      <td><span class="pill ${critCls}">${calc.criticidad}</span></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-outline btn-sm" onclick="switchTab(1);setTimeout(()=>document.getElementById('panel-${s.id}')?.scrollIntoView({behavior:'smooth',block:'start'}),120)">📊 Analizar</button>
+          <button class="btn btn-outline btn-sm" onclick="openServiceModal('${s.id}')">✏</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteService('${s.id}')">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  updateStatusBar();
+}
+
+// ════════════════════════════════════════════════════════════
+// CALC SERVICE
+// ════════════════════════════════════════════════════════════
+function calcService(s){
+  const imp = impacts[s.id];
+  if(!imp) return {mtpd:null,rto:null,rpo:null,criticidad:'—',mtpdLabel:'—',rtoLabel:'—',rpoLabel:'—'};
+
+  const score = {'bajo':1,'medio':2,'alto':3};
+  let mtpdTime = null;  // hours
+
+  for(const t of TIMES){
+    let maxScore = 0;
+    for(const d of DIMS){
+      const v = imp[d]?.[t];
+      if(v && score[v] > maxScore) maxScore = score[v];
+    }
+    if(maxScore === 3){
+      mtpdTime = TIME_H[t];
+      break;
+    }
+  }
+
+  const adj = rtoAdj[s.id] ?? 0.5;
+  const rtoH = mtpdTime !== null ? mtpdTime * adj : null;
+  const rpoH = s.freqCambio ? Math.min(s.freqCambio * 2, rtoH ?? 9999) : null;
+
+  // criticidad
+  let criticidad = '—';
+  if(mtpdTime !== null){
+    const imp1h = maxImpAtTime(s,'1h');
+    const imp4h = maxImpAtTime(s,'4h');
+    if(mtpdTime <= 4 || imp1h === 3) criticidad = 'ESENCIAL';
+    else if(mtpdTime <= 24 || imp4h === 3) criticidad = 'IMPORTANTE';
+    else criticidad = 'COMPLEMENTARIO';
+  } else {
+    // check if any dim analyzed
+    let anyAnalyzed = false;
+    for(const d of DIMS) for(const t of TIMES) if(imp[d]?.[t]) anyAnalyzed = true;
+    if(anyAnalyzed) criticidad = 'COMPLEMENTARIO';
+  }
+
+  return {
+    mtpd: mtpdTime,
+    rto:  rtoH,
+    rpo:  rpoH,
+    criticidad,
+    mtpdLabel: mtpdTime ? fmtH(mtpdTime) : 'No determinado',
+    rtoLabel:  rtoH     ? fmtH(rtoH)     : '—',
+    rpoLabel:  rpoH     ? fmtH(rpoH)     : '—'
+  };
+}
+
+function maxImpAtTime(s, t){
+  const imp = impacts[s.id];
+  if(!imp) return 0;
+  const sc = {'bajo':1,'medio':2,'alto':3};
+  let max = 0;
+  for(const d of DIMS){ const v=imp[d]?.[t]; if(v && sc[v]>max) max=sc[v]; }
+  return max;
+}
+
+function maxImpScore(s,t){
+  const v = maxImpAtTime(s,t);
+  return v;
+}
+
+function fmtH(h){
+  if(!h) return '—';
+  if(h < 1)  return Math.round(h*60)+'min';
+  if(h < 24) return h%1===0?h+'h':h.toFixed(1)+'h';
+  if(h < 168) return (h/24).toFixed(h%24===0?0:1)+'d';
+  return Math.round(h/168)+'sem';
+}
+
+// ════════════════════════════════════════════════════════════
+// IMPACT PANELS
+// ════════════════════════════════════════════════════════════
+function renderImpactPanels(){
+  const cont = document.getElementById('impactPanels');
+  if(!services.length){
+    cont.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-title">No hay servicios para analizar</div><p style="font-size:13px">Vaya a la pestaña "Servicios" y registre al menos un servicio.</p></div>`;
+    renderHeatmap();
+    return;
+  }
+  cont.innerHTML = services.map(s=>renderServicePanel(s)).join('');
+  renderHeatmap();
+  updateBadges();
+}
+
+function renderServicePanel(s){
+  const calc = calcService(s);
+  const critCls = {'ESENCIAL':'pill-esencial','IMPORTANTE':'pill-importante','COMPLEMENTARIO':'pill-complementario','—':'pill-nd'}[calc.criticidad]||'pill-nd';
+
+  // build grid
+  let gridRows = '';
+  // Header row
+  gridRows += `<div class="ig-header" style="grid-column:1"></div>`;
+  TIMES.forEach(t=>{ gridRows+=`<div class="ig-header">${t}</div>`; });
+
+  DIMS.forEach(d=>{
+    gridRows += `<div class="ig-dim-label">${d}</div>`;
+    TIMES.forEach(t=>{
+      const v = impacts[s.id]?.[d]?.[t] || null;
+      gridRows += `<div class="impact-btn-group" id="ibg-${s.id}-${d}-${t}">
+        ${['bajo','medio','alto'].map(lv=>`<button class="impact-btn ${lv}${v===lv?' sel':''}" onclick="setImpact('${s.id}','${d}','${t}','${lv}')">${lv.substring(0,1).toUpperCase()}</button>`).join('')}
+      </div>`;
+    });
+  });
+
+  // Timeline
+  let tlHtml = buildTimeline(s, calc);
+  // Radar
+  let radarHtml = buildRadar(s);
+
+  const adjPct = Math.round((rtoAdj[s.id]??0.5)*100);
+
+  return `<div class="impact-section" id="panel-${s.id}">
+    <div class="impact-service-header">
+      <div>
+        <div class="impact-service-name">${esc(s.nombre)}</div>
+        <div class="impact-service-meta">${esc(s.categoria)} · Responsable: ${esc(s.responsable||'—')} · Activos: ${esc((s.activos||'—').substring(0,50))}</div>
+      </div>
+      <span class="pill ${critCls}">${calc.criticidad}</span>
+    </div>
+    <div class="impact-body">
+      <div class="rpo-field-row" style="margin-bottom:14px">
+        <span class="rpo-field-label">Frecuencia de cambio de datos:</span>
+        <input type="number" class="rpo-input" value="${s.freqCambio}" min="0.25" step="0.25" onchange="updateFreq('${s.id}',this.value)"> h
+        <span style="font-size:11px;color:var(--slate-500);margin-left:8px">RPO base calculado a 2× frecuencia de cambio</span>
+      </div>
+
+      <div class="impact-grid-wrap">
+        <div class="impact-grid" id="igrid-${s.id}">${gridRows}</div>
+      </div>
+
+      <div class="calc-row" id="calcrow-${s.id}">
+        <div class="calc-box">
+          <div class="calc-box-label">MTPD</div>
+          <div class="calc-box-val" id="mtpd-${s.id}">${calc.mtpdLabel}</div>
+          <div class="calc-box-sub">Tolerancia máx. interrupción</div>
+        </div>
+        <div class="calc-box">
+          <div class="calc-box-label">RTO sugerido</div>
+          <div class="calc-box-val" id="rto-${s.id}">${calc.rtoLabel}</div>
+          <div class="calc-box-sub">
+            Ajuste: <input type="range" class="rto-slider" min="30" max="70" step="5" value="${adjPct}" oninput="adjustRTO('${s.id}',this.value/100);document.getElementById('rtoPct-${s.id}').textContent=this.value+'%'"> 
+            <span id="rtoPct-${s.id}">${adjPct}%</span> del MTPD
+          </div>
+        </div>
+        <div class="calc-box">
+          <div class="calc-box-label">RPO sugerido</div>
+          <div class="calc-box-val" id="rpo-${s.id}">${calc.rpoLabel}</div>
+          <div class="calc-box-sub">Máx. pérdida tolerable datos</div>
+        </div>
+        <div class="calc-box">
+          <div class="calc-box-label">Criticidad</div>
+          <div class="calc-box-val" id="crit-${s.id}" style="font-size:14px">${calc.criticidad}</div>
+          <div class="calc-box-sub">Derivada del perfil de impacto</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px">
+        <div style="flex:1;min-width:260px">
+          ${tlHtml}
+        </div>
+        <div style="flex:0 0 180px">
+          ${radarHtml}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildTimeline(s, calc){
+  if(!calc.mtpd) return `<div class="timeline-wrap"><div class="timeline-label">Timeline de Recuperación</div><div style="color:var(--slate-400);font-size:12px;font-style:italic">Complete el análisis para ver el timeline.</div></div>`;
+  
+  const total = calc.mtpd * 1.3;
+  const rpoPct = Math.min((calc.rpo/total)*100, 95);
+  const rtoPct = Math.min((calc.rto/total)*100, 95);
+  const mtpdPct = Math.min((calc.mtpd/total)*100, 95);
+
+  return `<div class="timeline-wrap">
+    <div class="timeline-label">Timeline de Recuperación</div>
+    <div class="timeline-bar">
+      <div class="tl-mtpd" style="width:${mtpdPct}%"></div>
+      <div class="tl-rto"  style="width:${rtoPct}%"></div>
+      <div class="tl-rpo"  style="width:${rpoPct}%"></div>
+      <div class="tl-label" style="left:${Math.max(rpoPct-8,1)}%;color:var(--green-600)">RPO</div>
+    </div>
+    <div class="timeline-legend">
+      <div class="tl-leg"><div class="tl-leg-dot" style="background:rgba(61,189,106,0.5);border:1px solid var(--green-500)"></div>RPO: ${calc.rpoLabel}</div>
+      <div class="tl-leg"><div class="tl-leg-dot" style="background:rgba(240,149,0,0.3);border:1px solid var(--amber-500)"></div>RTO: ${calc.rtoLabel}</div>
+      <div class="tl-leg"><div class="tl-leg-dot" style="background:rgba(197,32,32,0.15);border:1px solid var(--red-500)"></div>MTPD: ${calc.mtpdLabel}</div>
+    </div>
+  </div>`;
+}
+
+function buildRadar(s){
+  const imp = impacts[s.id];
+  const sc = {'bajo':1,'medio':2,'alto':3};
+  const vals = DIMS.map(d=>{
+    const v = imp?.[d]?.['24h'];
+    return v ? sc[v]/3 : 0;
+  });
+  const cx=85, cy=85, r=60;
+  const angles = DIMS.map((_,i) => -Math.PI/2 + (2*Math.PI/5)*i);
+  const pts = vals.map((v,i)=>({
+    x: cx + r*v*Math.cos(angles[i]),
+    y: cy + r*v*Math.sin(angles[i])
+  }));
+  const poly = pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  
+  // grid rings
+  let rings = '';
+  [1,2,3].forEach(ring=>{
+    const rp = DIMS.map((_,i)=>({
+      x: cx + r*(ring/3)*Math.cos(angles[i]),
+      y: cy + r*(ring/3)*Math.sin(angles[i])
+    }));
+    rings += `<polygon points="${rp.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#e0d0f5" stroke-width="1"/>`;
+  });
+
+  // axes
+  let axes = DIMS.map((_,i)=>`<line x1="${cx}" y1="${cy}" x2="${(cx+r*Math.cos(angles[i])).toFixed(1)}" y2="${(cy+r*Math.sin(angles[i])).toFixed(1)}" stroke="#c4a3e8" stroke-width="1"/>`).join('');
+  
+  // labels
+  let labels = DIMS.map((d,i)=>{
+    const lx = cx + (r+14)*Math.cos(angles[i]);
+    const ly = cy + (r+14)*Math.sin(angles[i]);
+    return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="#5a2d9e" font-family="IBM Plex Mono" font-size="11" font-weight="700">${d}</text>`;
+  }).join('');
+
+  return `<div>
+    <div style="font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--plum-500);margin-bottom:4px;">Perfil impacto 24h</div>
+    <svg viewBox="0 0 170 170" width="170" height="170">
+      ${rings}${axes}
+      <polygon points="${poly}" fill="rgba(122,75,194,0.18)" stroke="#7b4bc2" stroke-width="2"/>
+      ${pts.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#7b4bc2"/>`).join('')}
+      ${labels}
+    </svg>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// IMPACT INTERACTIONS
+// ════════════════════════════════════════════════════════════
+function setImpact(id, dim, time, level){
+  if(!impacts[id]) return;
+  if(!impacts[id][dim]) impacts[id][dim]={};
+  const current = impacts[id][dim][time];
+  impacts[id][dim][time] = (current === level) ? null : level;
+  updateImpactBtns(id, dim, time);
+  refreshServiceCalc(id);
+}
+
+function updateImpactBtns(id, dim, time){
+  const grp = document.getElementById(`ibg-${id}-${dim}-${time}`);
+  if(!grp) return;
+  const val = impacts[id]?.[dim]?.[time] || null;
+  grp.querySelectorAll('.impact-btn').forEach(btn=>{
+    const lv = btn.className.match(/bajo|medio|alto/)?.[0];
+    btn.classList.toggle('sel', lv === val);
+  });
+}
+
+function refreshServiceCalc(id){
+  const s = services.find(x=>x.id===id);
+  if(!s) return;
+  const calc = calcService(s);
+  const el = n => document.getElementById(`${n}-${id}`);
+  if(el('mtpd')) el('mtpd').textContent = calc.mtpdLabel;
+  if(el('rto'))  el('rto').textContent  = calc.rtoLabel;
+  if(el('rpo'))  el('rpo').textContent  = calc.rpoLabel;
+  if(el('crit')) el('crit').textContent = calc.criticidad;
+  
+  // Update timeline
+  const tlWrap = document.querySelector(`#panel-${id} .timeline-wrap`);
+  if(tlWrap) tlWrap.outerHTML = buildTimeline(s,calc);
+  
+  // Update radar
+  const radarWrap = document.querySelector(`#panel-${id} svg`)?.parentElement;
+  if(radarWrap) radarWrap.outerHTML = buildRadar(s);
+
+  // Update criticality pill
+  const hdr = document.querySelector(`#panel-${id} .impact-service-header .pill`);
+  if(hdr){
+    const cls = {'ESENCIAL':'pill-esencial','IMPORTANTE':'pill-importante','COMPLEMENTARIO':'pill-complementario','—':'pill-nd'}[calc.criticidad]||'pill-nd';
+    hdr.className = `pill ${cls}`;
+    hdr.textContent = calc.criticidad;
+  }
+
+  renderHeatmap();
+  updateBadges();
+  renderServicesTable();
+}
+
+function adjustRTO(id, factor){
+  rtoAdj[id] = factor;
+  refreshServiceCalc(id);
+}
+
+function updateFreq(id, val){
+  const s = services.find(x=>x.id===id);
+  if(s){ s.freqCambio = parseFloat(val)||1; refreshServiceCalc(id); }
+}
+
+// ════════════════════════════════════════════════════════════
+// HEATMAP
+// ════════════════════════════════════════════════════════════
+function renderHeatmap(){
+  const tb = document.getElementById('heatmapBody');
+  if(!services.length){
+    tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--slate-400);font-style:italic;font-size:13px">Añada servicios y complete el análisis para ver el mapa de calor.</td></tr>';
+    return;
+  }
+  const sorted = [...services].sort((a,b)=>{
+    const ord={'ESENCIAL':0,'IMPORTANTE':1,'COMPLEMENTARIO':2,'—':3};
+    return (ord[calcService(a).criticidad]??3)-(ord[calcService(b).criticidad]??3);
+  });
+  tb.innerHTML = sorted.map(s=>{
+    const calc = calcService(s);
+    const critCls = {'ESENCIAL':'pill-esencial','IMPORTANTE':'pill-importante','COMPLEMENTARIO':'pill-complementario','—':'pill-nd'}[calc.criticidad]||'pill-nd';
+    const cells = TIMES.map(t=>{
+      const v = maxImpScore(s,t);
+      const cls = ['hm-0','hm-1','hm-2','hm-3'][v]||'hm-0';
+      const lbl = ['—','BAJO','MEDIO','ALTO'][v]||'—';
+      const title = `${s.nombre} @ ${t}: ${lbl}`;
+      return `<td class="hm-cell ${cls}" title="${esc(title)}">${lbl}</td>`;
+    }).join('');
+    return `<tr>
+      <td class="hm-name" title="${esc(s.nombre)}">${esc(s.nombre)}</td>
+      ${cells}
+      <td style="text-align:center;font-family:var(--font-mono);font-size:11px;padding:6px 8px">${calc.mtpdLabel}</td>
+      <td style="text-align:center;padding:6px 8px"><span class="pill ${critCls}" style="font-size:9px">${calc.criticidad}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// BADGES & STATUS
+// ════════════════════════════════════════════════════════════
+function updateBadges(){
+  const counts = {ESENCIAL:0,IMPORTANTE:0,COMPLEMENTARIO:0};
+  services.forEach(s=>{ const c=calcService(s).criticidad; if(counts[c]!==undefined) counts[c]++; });
+  document.getElementById('cnt-esencial').textContent     = counts.ESENCIAL;
+  document.getElementById('cnt-importante').textContent   = counts.IMPORTANTE;
+  document.getElementById('cnt-complementario').textContent= counts.COMPLEMENTARIO;
+}
+
+function updateStatusBar(){
+  document.getElementById('sb-total').textContent = services.length;
+  let analyzed = 0;
+  services.forEach(s=>{
+    let any=false;
+    DIMS.forEach(d=>TIMES.forEach(t=>{ if(impacts[s.id]?.[d]?.[t]) any=true; }));
+    if(any) analyzed++;
+  });
+  document.getElementById('sb-analyzed').textContent = analyzed;
+}
+
+// ════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════
+function saveConfig(){
+  config = {
+    organismo:   document.getElementById('cfg-organismo').value.trim(),
+    sistema:     document.getElementById('cfg-sistema').value.trim(),
+    categoria:   document.getElementById('cfg-categoria').value,
+    responsable: document.getElementById('cfg-responsable').value.trim(),
+    fecha:       document.getElementById('cfg-fecha').value,
+    revision:    document.getElementById('cfg-revision').value
+  };
+}
+
+// ════════════════════════════════════════════════════════════
+// EXPORT
+// ════════════════════════════════════════════════════════════
+function checkExportWarn(){
+  let incomplete=false;
+  services.forEach(s=>{ let any=false; DIMS.forEach(d=>TIMES.forEach(t=>{ if(impacts[s.id]?.[d]?.[t]) any=true; })); if(!any) incomplete=true; });
+  document.getElementById('export-warn').style.display = (services.length && incomplete)?'flex':'none';
+}
+
+function exportServicesCSV(){
+  const rows=[['ID','Nombre','Descripcion','Categoria','Responsable','Activos','Dependencias','FrecCambioH','Usuarios']];
+  services.forEach(s=>rows.push([s.id,s.nombre,s.desc,s.categoria,s.responsable,s.activos,s.dependencias,s.freqCambio,s.usuarios]));
+  downloadCSV(rows,'servicios-bia.csv');
+}
+
+function exportAnalysisCSV(){
+  const rows=[['Servicio','Categoria','Responsable','MTPD','RTO_Sugerido','RPO_Sugerido','Criticidad','Activos','Dependencias',
+    'Imp_D_1h','Imp_D_4h','Imp_D_24h','Imp_D_72h','Imp_D_1sem',
+    'Imp_A_1h','Imp_A_4h','Imp_A_24h','Imp_A_72h','Imp_A_1sem',
+    'Imp_I_1h','Imp_I_4h','Imp_I_24h','Imp_I_72h','Imp_I_1sem',
+    'Imp_C_1h','Imp_C_4h','Imp_C_24h','Imp_C_72h','Imp_C_1sem',
+    'Imp_T_1h','Imp_T_4h','Imp_T_24h','Imp_T_72h','Imp_T_1sem'
+  ]];
+  services.forEach(s=>{
+    const c=calcService(s);
+    const row=[s.nombre,s.categoria,s.responsable,c.mtpdLabel,c.rtoLabel,c.rpoLabel,c.criticidad,s.activos,s.dependencias];
+    DIMS.forEach(d=>TIMES.forEach(t=>row.push(impacts[s.id]?.[d]?.[t]||'')));
+    rows.push(row);
+  });
+  downloadCSV(rows,'analisis-bia.csv');
+}
+
+function downloadCSV(rows, filename){
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  download(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}), filename);
+}
+
+function download(blob, filename){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+}
+
+function importCSV(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const lines=ev.target.result.split('\n').slice(1);
+    let added=0;
+    lines.forEach(line=>{
+      if(!line.trim()) return;
+      const cols=line.split(',').map(c=>c.replace(/^"|"$/g,'').replace(/""/g,'"'));
+      const svc={
+        id:       cols[0]||'svc_'+Date.now()+Math.random(),
+        nombre:   cols[1]||'Sin nombre',
+        desc:     cols[2]||'',
+        categoria:cols[3]||'TIC',
+        responsable:cols[4]||'',
+        activos:  cols[5]||'',
+        dependencias:cols[6]||'',
+        freqCambio:parseFloat(cols[7])||4,
+        usuarios:parseInt(cols[8])||0
+      };
+      if(!services.find(x=>x.id===svc.id)){
+        services.push(svc);
+        impacts[svc.id]={};
+        rtoAdj[svc.id]=0.5;
+        DIMS.forEach(d=>{impacts[svc.id][d]={};TIMES.forEach(t=>{impacts[svc.id][d][t]=null;});});
+        added++;
+      }
+    });
+    alert(`Se importaron ${added} servicios.`);
+    renderServicesTable();
+    updateBadges();
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+// ════════════════════════════════════════════════════════════
+// FULL REPORT
+// ════════════════════════════════════════════════════════════
+function exportFullReport(){
+  if(!services.length){ alert('No hay servicios registrados. Añada al menos un servicio antes de exportar.'); return; }
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+  const timeStr = now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+
+  const cfg = config;
+  const esenciales = services.filter(s=>calcService(s).criticidad==='ESENCIAL');
+  const importantes = services.filter(s=>calcService(s).criticidad==='IMPORTANTE');
+  const complementarios = services.filter(s=>calcService(s).criticidad==='COMPLEMENTARIO');
+
+  // Build heatmap HTML for report
+  let hmHtml = `<table style="border-collapse:separate;border-spacing:3px;width:100%;font-size:11px">
+    <thead><tr style="background:#1a0a2e">
+      <th style="color:#c4a3e8;padding:8px 10px;text-align:left;font-family:monospace">Servicio</th>
+      ${TIMES.map(t=>`<th style="color:#c4a3e8;padding:8px;text-align:center;font-family:monospace">${t}</th>`).join('')}
+      <th style="color:#c4a3e8;padding:8px;text-align:center;font-family:monospace">MTPD</th>
+      <th style="color:#c4a3e8;padding:8px;text-align:center;font-family:monospace">Criticidad</th>
+    </tr></thead>
+    <tbody>`;
+  
+  [...services].sort((a,b)=>{const ord={'ESENCIAL':0,'IMPORTANTE':1,'COMPLEMENTARIO':2,'—':3};return (ord[calcService(a).criticidad]??3)-(ord[calcService(b).criticidad]??3);})
+  .forEach(s=>{
+    const calc=calcService(s);
+    const colors={'ESENCIAL':'#fac5c5','IMPORTANTE':'#fde6a0','COMPLEMENTARIO':'#c3f0d6','—':'#f0f0f5'};
+    const critBg = colors[calc.criticidad]||'#f0f0f5';
+    const hmColors = {0:'#f0f0f5',1:'#c3f0d6',2:'#fde6a0',3:'#fac5c5'};
+    hmHtml+=`<tr>
+      <td style="padding:7px 10px;font-size:12px;font-weight:500">${esc(s.nombre)}</td>
+      ${TIMES.map(t=>{const v=maxImpScore(s,t);return `<td style="background:${hmColors[v]};text-align:center;padding:6px;border-radius:4px;font-family:monospace;font-size:10px;font-weight:700">${['—','BAJO','MEDIO','ALTO'][v]||'—'}</td>`;}).join('')}
+      <td style="text-align:center;font-family:monospace;font-size:11px;font-weight:600;padding:6px">${calc.mtpdLabel}</td>
+      <td style="background:${critBg};text-align:center;padding:6px;border-radius:4px;font-family:monospace;font-size:10px;font-weight:700">${calc.criticidad}</td>
+    </tr>`;
+  });
+  hmHtml += '</tbody></table>';
+
+  // Summary table
+  let sumHtml = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr style="background:#1a0a2e">
+      <th style="color:#c4a3e8;padding:9px 12px;text-align:left;font-family:monospace">Servicio</th>
+      <th style="color:#c4a3e8;padding:9px;text-align:center;font-family:monospace">Cat.</th>
+      <th style="color:#c4a3e8;padding:9px;text-align:center;font-family:monospace">MTPD</th>
+      <th style="color:#c4a3e8;padding:9px;text-align:center;font-family:monospace">RTO</th>
+      <th style="color:#c4a3e8;padding:9px;text-align:center;font-family:monospace">RPO</th>
+      <th style="color:#c4a3e8;padding:9px;text-align:center;font-family:monospace">Criticidad</th>
+      <th style="color:#c4a3e8;padding:9px;text-align:left;font-family:monospace">Responsable</th>
+    </tr></thead><tbody>`;
+
+  [...services].sort((a,b)=>{const ord={'ESENCIAL':0,'IMPORTANTE':1,'COMPLEMENTARIO':2,'—':3};return (ord[calcService(a).criticidad]??3)-(ord[calcService(b).criticidad]??3);})
+  .forEach((s,i)=>{
+    const calc=calcService(s);
+    const colors={'ESENCIAL':'#fde8e8','IMPORTANTE':'#fff0cc','COMPLEMENTARIO':'#d4f5e2','—':'#f0f0f5'};
+    const bg = i%2===0?'#f8f6fc':'#fff';
+    sumHtml+=`<tr style="background:${bg};border-bottom:1px solid #e8e0f0">
+      <td style="padding:9px 12px;font-weight:500">${esc(s.nombre)}</td>
+      <td style="padding:9px;text-align:center;font-family:monospace;font-size:11px">${esc(s.categoria)}</td>
+      <td style="padding:9px;text-align:center;font-family:monospace;font-weight:700">${calc.mtpdLabel}</td>
+      <td style="padding:9px;text-align:center;font-family:monospace;font-weight:700;color:#b85c00">${calc.rtoLabel}</td>
+      <td style="padding:9px;text-align:center;font-family:monospace;font-weight:700;color:#1a6b3a">${calc.rpoLabel}</td>
+      <td style="padding:9px;text-align:center"><span style="background:${colors[calc.criticidad]||'#f0f0f5'};padding:3px 8px;border-radius:10px;font-family:monospace;font-size:10px;font-weight:700">${calc.criticidad}</span></td>
+      <td style="padding:9px 12px;font-size:12px;color:#4a4a6a">${esc(s.responsable||'—')}</td>
+    </tr>`;
+  });
+  sumHtml+='</tbody></table>';
+
+  // Dependencies matrix
+  let depMatrix = '<p style="color:#6b6b8f;font-size:12px">';
+  const hasDeps = services.some(s=>s.dependencias);
+  if(hasDeps){
+    depMatrix = `<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#f3edfb"><th style="padding:8px 12px;text-align:left">Servicio</th><th style="padding:8px 12px;text-align:left">Dependencias declaradas</th><th style="padding:8px 12px;text-align:left">Activos/Sistemas</th></tr></thead><tbody>`;
+    services.forEach((s,i)=>{
+      depMatrix+=`<tr style="background:${i%2===0?'#fff':'#f8f6fc'};border-bottom:1px solid #e8e0f0"><td style="padding:8px 12px;font-weight:500">${esc(s.nombre)}</td><td style="padding:8px 12px;color:#4a4a6a;font-size:11px">${esc(s.dependencias||'Ninguna declarada')}</td><td style="padding:8px 12px;color:#4a4a6a;font-size:11px">${esc(s.activos||'—')}</td></tr>`;
+    });
+    depMatrix+='</tbody></table>';
+  } else {
+    depMatrix += 'No se han declarado dependencias entre servicios.</p>';
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Informe BIA — ${esc(cfg.organismo||'Organismo')} — ${dateStr}</title>
+<style>
+body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;color:#1a1a24;background:#fff;font-size:13px}
+.cover{background:#1a0a2e;color:#fff;padding:48px 60px;page-break-after:always}
+.cover-badge{display:inline-block;background:#d4a017;color:#1a0a2e;padding:4px 14px;border-radius:4px;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.1em;margin-bottom:24px}
+.cover-title{font-size:32px;font-weight:300;margin-bottom:8px;letter-spacing:-0.01em}
+.cover-title strong{font-weight:700;color:#e8b824}
+.cover-sub{font-size:14px;color:#c4a3e8;margin-bottom:40px}
+.cover-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(255,255,255,0.06);padding:20px;border-radius:8px;border:1px solid rgba(255,255,255,0.1)}
+.cover-field label{font-family:monospace;font-size:10px;font-weight:700;color:#9d6fd6;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:3px}
+.cover-field span{font-size:13px;color:#fff;font-weight:500}
+.section{padding:32px 60px;border-bottom:1px solid #e8e0f0}
+.section:last-child{border-bottom:none}
+.section-title{font-size:18px;font-weight:700;color:#2d1554;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.section-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#2d1554;color:#fff;font-size:12px;font-weight:700}
+.section-desc{font-size:12px;color:#6b6b8f;margin-bottom:20px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.sum-box{padding:14px;border-radius:8px;border:1px solid}
+.sum-box-esencial{background:#fde8e8;border-color:#f5a0a0}
+.sum-box-importante{background:#fff0cc;border-color:#f5c878}
+.sum-box-complementario{background:#d4f5e2;border-color:#90dba8}
+.sum-box-total{background:#f3edfb;border-color:#c4a3e8}
+.sum-num{font-size:32px;font-weight:700;font-family:monospace;line-height:1}
+.sum-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;font-family:monospace;margin-top:4px}
+.conclusions{background:#f8f6fc;border:1px solid #e0d0f5;border-radius:8px;padding:20px;margin-top:16px}
+.conclusions h3{font-size:14px;color:#2d1554;margin-bottom:12px}
+.conclusions ul{padding-left:20px;color:#3f1f7a;font-size:13px;line-height:1.8}
+.footer{background:#1a0a2e;color:#6b6b8f;padding:16px 60px;font-family:monospace;font-size:10px;display:flex;justify-content:space-between;align-items:center;letter-spacing:0.03em}
+.footer a{color:#9d6fd6}
+.signature-block{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.sig-line{border-top:2px solid #2d1554;padding-top:8px;margin-top:50px}
+.sig-label{font-size:11px;color:#6b6b8f;font-family:monospace;text-transform:uppercase;letter-spacing:0.06em}
+@media print{.section{padding:24px 40px}.cover{padding:40px}}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-badge">USO INTERNO — ENS — BIA</div>
+  <div class="cover-title">Análisis de Impacto<br>en el <strong>Negocio (BIA)</strong></div>
+  <div class="cover-sub">Business Impact Analysis · op.cont.1 · RD 311/2022 ENS · CCN-STIC-808</div>
+  <div class="cover-meta">
+    <div class="cover-field"><label>Organismo</label><span>${esc(cfg.organismo||'No especificado')}</span></div>
+    <div class="cover-field"><label>Sistema de información</label><span>${esc(cfg.sistema||'No especificado')}</span></div>
+    <div class="cover-field"><label>Categoría ENS</label><span>${esc(cfg.categoria||'No especificada')}</span></div>
+    <div class="cover-field"><label>Responsable del BIA</label><span>${esc(cfg.responsable||'No especificado')}</span></div>
+    <div class="cover-field"><label>Fecha del análisis</label><span>${cfg.fecha||dateStr}</span></div>
+    <div class="cover-field"><label>Próxima revisión</label><span>${cfg.revision||'No especificada'}</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="section-num">1</span> Resumen Ejecutivo</div>
+  <div class="section-desc">Distribución de servicios por nivel de criticidad y parámetros de recuperación.</div>
+  <div class="summary-grid">
+    <div class="sum-box sum-box-esencial"><div class="sum-num" style="color:#8b1a1a">${esenciales.length}</div><div class="sum-label" style="color:#8b1a1a">Esenciales</div></div>
+    <div class="sum-box sum-box-importante"><div class="sum-num" style="color:#b85c00">${importantes.length}</div><div class="sum-label" style="color:#b85c00">Importantes</div></div>
+    <div class="sum-box sum-box-complementario"><div class="sum-num" style="color:#1a6b3a">${complementarios.length}</div><div class="sum-label" style="color:#1a6b3a">Complementarios</div></div>
+    <div class="sum-box sum-box-total"><div class="sum-num" style="color:#2d1554">${services.length}</div><div class="sum-label" style="color:#2d1554">Total servicios</div></div>
+  </div>
+  <div class="conclusions">
+    <h3>Conclusiones del Análisis</h3>
+    <ul>
+      ${esenciales.length?`<li><strong>${esenciales.length} servicio(s) ESENCIAL(ES)</strong> con MTPD ≤ 4h o impacto ALTO a 1h. Requieren medidas de continuidad de alto nivel y plan de recuperación ante desastres (DRP). Servicios: <em>${esenciales.map(s=>s.nombre).join(', ')}</em>.</li>`:''}
+      ${importantes.length?`<li><strong>${importantes.length} servicio(s) IMPORTANTE(S)</strong> con MTPD entre 4h y 24h. Requieren procedimientos de continuidad documentados y backups validados. Servicios: <em>${importantes.map(s=>s.nombre).join(', ')}</em>.</li>`:''}
+      ${complementarios.length?`<li><strong>${complementarios.length} servicio(s) COMPLEMENTARIO(S)</strong> con menor criticidad temporal. Requieren medidas básicas de recuperación y backup periódico.</li>`:''}
+      <li>El presente análisis cubre el requisito de evidencia de <strong>op.cont.1</strong> conforme a RD 311/2022 ENS y CCN-STIC-808 (Fila 166).</li>
+      <li>Los parámetros RTO y RPO calculados son orientativos. Deben ser formalmente aprobados por el Responsable del Sistema y el Comité de Seguridad.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="section-num">2</span> Mapa de Calor de Impacto</div>
+  <div class="section-desc">Impacto máximo (en cualquier dimensión ENS D/A/I/C/T) por servicio y marco temporal.</div>
+  ${hmHtml}
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="section-num">3</span> Tabla de Servicios con Parámetros de Recuperación</div>
+  <div class="section-desc">RTO, RPO y MTPD por servicio, ordenados por criticidad.</div>
+  ${sumHtml}
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="section-num">4</span> Matriz de Dependencias</div>
+  <div class="section-desc">Relaciones de dependencia entre servicios y activos/sistemas de soporte.</div>
+  ${depMatrix}
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="section-num">5</span> Firma y Aprobación</div>
+  <div class="section-desc">El presente documento debe ser firmado por el Responsable del Sistema y el Responsable de Seguridad.</div>
+  <div class="signature-block">
+    <div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Responsable del BIA / Responsable del Sistema</div>
+      <div style="margin-top:6px;font-size:12px;color:#4a4a6a">${esc(cfg.responsable||'___________________________')}</div>
+      <div style="margin-top:4px;font-size:11px;color:#9898b8">Fecha: ${cfg.fecha||'_____ / _____ / _____'}</div>
+    </div>
+    <div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Responsable de Seguridad (RSI)</div>
+      <div style="margin-top:6px;font-size:12px;color:#4a4a6a">___________________________</div>
+      <div style="margin-top:4px;font-size:11px;color:#9898b8">Fecha: _____ / _____ / _____</div>
+    </div>
+  </div>
+  <div style="margin-top:32px;padding:12px 16px;background:#f3edfb;border-radius:6px;border:1px solid #e0d0f5;font-size:11px;color:#5a2d9e;font-family:monospace">
+    Sello: Generado el ${dateStr} a las ${timeStr} · BIACalc ENS v1.0 · Procesamiento 100% local, sin transmisión de datos
+  </div>
+</div>
+
+<div class="footer">
+  <span>Análisis de Impacto en el Negocio conforme a op.cont.1 — RD 311/2022 ENS — CCN-STIC-808 Fila 166</span>
+  <span>${esc(cfg.organismo||'')} · ${dateStr}</span>
+</div>
+</body>
+</html>`;
+
+  download(new Blob([html],{type:'text/html;charset=utf-8'}), `BIA-ENS-${(cfg.organismo||'informe').replace(/\s+/g,'-')}-${new Date().toISOString().split('T')[0]}.html`);
+}
+
+function exportServiceCards(){
+  if(!services.length){ alert('No hay servicios registrados.'); return; }
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+  const cards = services.map(s=>{
+    const calc=calcService(s);
+    const imp=impacts[s.id]||{};
+    const sc={'bajo':1,'medio':2,'alto':3};
+    const colors={'bajo':'#c3f0d6','medio':'#fde6a0','alto':'#fac5c5'};
+    const textColors={'bajo':'#1a6b3a','medio':'#b85c00','alto':'#8b1a1a'};
+    const critBg={'ESENCIAL':'#fde8e8','IMPORTANTE':'#fff0cc','COMPLEMENTARIO':'#d4f5e2','—':'#f0f0f5'};
+
+    let impTable = `<table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:12px">
+      <thead><tr style="background:#1a0a2e">
+        <th style="color:#c4a3e8;padding:7px 10px;text-align:left;font-family:monospace">Dim.</th>
+        ${TIMES.map(t=>`<th style="color:#c4a3e8;padding:7px;text-align:center;font-family:monospace">${t}</th>`).join('')}
+      </tr></thead><tbody>`;
+    DIMS.forEach((d,i)=>{
+      impTable+=`<tr style="background:${i%2===0?'#f8f6fc':'#fff'}"><td style="padding:7px 10px;font-family:monospace;font-weight:700;color:#5a2d9e">${d}</td>`;
+      TIMES.forEach(t=>{
+        const v=imp[d]?.[t]||null;
+        const bg=v?colors[v]:'#f0f0f5';
+        const tc=v?textColors[v]:'#9898b8';
+        impTable+=`<td style="background:${bg};text-align:center;padding:6px;font-family:monospace;font-size:10px;font-weight:700;color:${tc}">${v?v.toUpperCase():'—'}</td>`;
+      });
+      impTable+='</tr>';
+    });
+    impTable+='</tbody></table>';
+
+    return `<div style="page-break-after:always;padding:32px 40px;border-bottom:3px solid #1a0a2e">
+      <div style="background:#1a0a2e;color:#fff;padding:16px 20px;border-radius:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:18px;font-weight:700;letter-spacing:-0.01em">${esc(s.nombre)}</div>
+          <div style="font-size:11px;color:#c4a3e8;margin-top:3px;font-family:monospace">${esc(s.categoria)} · ${esc(s.responsable||'Sin responsable asignado')}</div>
+        </div>
+        <span style="background:${critBg[calc.criticidad]||'#f0f0f5'};padding:5px 12px;border-radius:4px;font-family:monospace;font-size:11px;font-weight:700;color:#1a0a2e">${calc.criticidad}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <div style="background:#f3edfb;border:1px solid #e0d0f5;border-radius:6px;padding:10px">
+          <div style="font-family:monospace;font-size:9px;color:#9d6fd6;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">MTPD</div>
+          <div style="font-family:monospace;font-size:18px;font-weight:700;color:#2d1554">${calc.mtpdLabel}</div>
+        </div>
+        <div style="background:#fff8d6;border:1px solid #f5cc55;border-radius:6px;padding:10px">
+          <div style="font-family:monospace;font-size:9px;color:#b8860b;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">RTO</div>
+          <div style="font-family:monospace;font-size:18px;font-weight:700;color:#b85c00">${calc.rtoLabel}</div>
+        </div>
+        <div style="background:#d4f5e2;border:1px solid #90dba8;border-radius:6px;padding:10px">
+          <div style="font-family:monospace;font-size:9px;color:#2d9e57;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">RPO</div>
+          <div style="font-family:monospace;font-size:18px;font-weight:700;color:#1a6b3a">${calc.rpoLabel}</div>
+        </div>
+        <div style="background:#f0f0f5;border:1px solid #c8c8dc;border-radius:6px;padding:10px">
+          <div style="font-family:monospace;font-size:9px;color:#6b6b8f;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Freq. cambio</div>
+          <div style="font-family:monospace;font-size:18px;font-weight:700;color:#363650">${s.freqCambio}h</div>
+        </div>
+      </div>
+      <div style="font-family:monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#5a2d9e;margin-bottom:4px">Perfil de impacto por dimensión ENS y marco temporal</div>
+      ${impTable}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;font-size:12px">
+        <div><strong style="font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:#6b6b8f">Sistemas/Activos</strong><div style="margin-top:3px;color:#363650">${esc(s.activos||'No especificados')}</div></div>
+        <div><strong style="font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:#6b6b8f">Dependencias</strong><div style="margin-top:3px;color:#363650">${esc(s.dependencias||'Ninguna declarada')}</div></div>
+      </div>
+      ${s.desc?`<div style="margin-top:10px;padding:10px;background:#f8f6fc;border-radius:6px;font-size:12px;color:#4a4a6a;line-height:1.5">${esc(s.desc)}</div>`:''}
+    </div>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Fichas BIA — ${esc(config.organismo||'Organismo')}</title></head>
+<body style="font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;color:#1a1a24">
+  <div style="background:#1a0a2e;color:#c4a3e8;font-family:monospace;font-size:10px;padding:5px 16px;text-align:center;letter-spacing:0.12em;text-transform:uppercase">
+    ⬛ ENS — Uso interno / Para gestión interna del organismo ⬛
+  </div>
+  <div style="background:#1a0a2e;padding:24px 40px;color:#fff;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #d4a017">
+    <div>
+      <div style="font-size:20px;font-weight:700">Fichas de Servicio — BIA ENS</div>
+      <div style="font-size:12px;color:#c4a3e8;font-family:monospace;margin-top:3px">op.cont.1 · RD 311/2022 · CCN-STIC-808 · ${esc(config.organismo||'Organismo')} · ${dateStr}</div>
+    </div>
+  </div>
+  ${cards}
+  <div style="background:#1a0a2e;color:#6b6b8f;padding:12px 40px;font-family:monospace;font-size:10px;text-align:center">
+    Análisis de Impacto en el Negocio conforme a op.cont.1 — RD 311/2022 ENS — CCN-STIC-808 Fila 166
+  </div>
+</body></html>`;
+
+  download(new Blob([html],{type:'text/html;charset=utf-8'}), `Fichas-BIA-${(config.organismo||'servicios').replace(/\s+/g,'-')}-${new Date().toISOString().split('T')[0]}.html`);
+}
+
+// ════════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════════
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Close modal on overlay click
+document.getElementById('serviceModal').addEventListener('click',function(e){
+  if(e.target===this) closeServiceModal();
+});
+
+// Set default date
+document.getElementById('cfg-fecha').value = new Date().toISOString().split('T')[0];
+
+// Init
+renderServicesTable();
+updateBadges();
+</script>
+</body>
+</html>
